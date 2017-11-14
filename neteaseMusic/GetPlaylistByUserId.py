@@ -46,7 +46,7 @@ def GetPlaylistDetail_Separately(uid):
 
     n = GetTheNumberOfPl(uid)
     playlist_self = playlist[0:n[0]-1]
-    playlist_collect = playlist[n[0]+n[1]-1:-(n[1]+1):-1]
+    playlist_collect = playlist[n[0]+n[1]-1:-(n[1]+2):-1]
 
     return playlist_self, playlist_collect
 
@@ -57,7 +57,7 @@ def GetPlaylistDetail_All(uid):
     :param uid:
     :return: playlistDetail_all
     '''
-    a = list(GetPlaylistDetail_Separately(uid))
+    a = GetPlaylistDetail_Separately(uid)
     return a[0] + a[1]
 
 
@@ -71,9 +71,9 @@ def GetPlaylistID_Separately(uid):
     playlist = GetPlaylistDetail_All(uid)
 
     # 利用列表切片分离出自创歌单与收藏歌单
-    number = GetTheNumberOfPl(uid)
-    playlist_self = playlist[0:number[0]-1]
-    playlist_collect = playlist[number[0]+number[1]-1:-(number[1]+1):-1]
+    n = GetTheNumberOfPl(uid)
+    playlist_self = playlist[0:n[0]-1]
+    playlist_collect = playlist[n[0]+n[1]-1:-(n[1]+2):-1]
 
     # playlist_id ，此处暂只取歌单ID, 列表
     playlistID_self = [i['id'] for i in playlist_self]
@@ -90,7 +90,7 @@ def GetPlaylistID_All(uid):
     '''
     # 使用新列表保存，而不直接return GetPlaylistID_Separately(uid)[0] + GetPlaylistID_Separately(uid)[1]
     # GetPlaylistID_Separately(uid)只用调用一次，而不是两次？
-    a = list(GetPlaylistID_Separately(uid))
+    a = GetPlaylistID_Separately(uid)
     return a[0] + a[1]
 
 
