@@ -7,8 +7,13 @@ import base64
 from Crypto.Cipher import AES
 
 
-#获取params
 def get_params(first_param, forth_param):
+    '''
+    获取params
+    :param first_param:
+    :param forth_param:
+    :return:
+    '''
     iv = "0102030405060708"
     first_key = forth_param
     second_key = 16 * 'F'
@@ -17,14 +22,23 @@ def get_params(first_param, forth_param):
     return h_encText.decode()
 
 
-# 获取encSecKey
 def get_encSecKey():
+    '''
+    获取encSecKey
+    :return: encSecKey
+    '''
     encSecKey = "257348aecb5e556c066de214e531faadd1c55d814f9be95fd06d6bff9f4c7a41f831f6394d5a3fd2e3881736d94a02ca919d952872e7d0a50ebfa1769a7a62d512f5f1ca21aec60bc3819a9c3ffca5eca9a0dba6d6f7249b06f5965ecfff3695b54e1c28f3f624750ed39e7de08fc8493242e26dbc4484a01c76f739e135637c"
     return encSecKey
 
 
-# AES解密
 def AES_encrypt(text, key, iv):
+    '''
+    AES解密
+    :param text:
+    :param key:
+    :param iv:
+    :return: encrypt_text
+    '''
     pad = 16 - len(text) % 16
     text = text + pad * chr(pad)
     encryptor = AES.new(key, AES.MODE_CBC, iv)
@@ -33,7 +47,6 @@ def AES_encrypt(text, key, iv):
     return encrypt_text
 
 
-# 传入post数据
 def crypt_api_playlist(uid):
     '''
     通过分析网易云网络请求抓包，playlist由ajax向指定网页服务器发包获取json格式文档动态生成，包含playlist所有数据, post内容为params & encSecKey
