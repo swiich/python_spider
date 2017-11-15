@@ -55,34 +55,14 @@ def Insert_SongsInfo(songid, songname):
     db.close()
 
 
-def Insert_comment(id, name, comment):
-    # Connect to the database
-    db = pymysql.connect(**config)
-    # 使用cursor()方法获取操作游标
-    cursor = db.cursor()
-    # SQL 插入语句
-    sql = "INSERT INTO `user_comment`(`id`, `name`, `comment`) VALUES (%s, %s, %s)"
-    try:
-        # 执行sql语句
-        cursor.execute(sql, (id, name, comment))
-        # 提交到数据库执行
-        db.commit()
-    except Exception as e:
-        print('出现错误,错误是:', e)
-        # 如果发生错误则回滚
-        db.rollback()
-    # 关闭数据库连接
-    db.close()
-
-
-def get_user_id_mysql():
+def get_user_id_():
     user_data = []
     # Connect to the database
     db = pymysql.connect(**config)
     # 使用cursor()方法获取操作游标
     cursor = db.cursor()
     # SQL 插入语句
-    sql = 'SELECT * FROM `user_comment` WHERE 1'
+    sql = 'SELECT * FROM `user_id` WHERE 1'
     try:
         # 执行sql语句
         cursor.execute(sql)
