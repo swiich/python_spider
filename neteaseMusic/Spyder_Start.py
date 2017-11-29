@@ -1,22 +1,40 @@
 import GetSongsByPlaylist
 import GetPlaylistByUserId
-import Mysql
+from pymongo import MongoClient
+import time
+
 
 if __name__ == '__main__':
 
-    uid = 3428554
+    client = MongoClient('localhost', 27017)
+    db = client['test']
+    collection = db['cloudmusic']
 
-    # 5832286  28 `  34885501  118    108781179  41   46543242  177   44590287 473  41299404 202   3428554  1-0   29372996 932  29631520 1001  7004245  864
-    playlist_id = GetPlaylistByUserId.GetPlaylistID_All(str(uid))[0]
+    total = 0
+    uid = 29372996
 
-    songIDs= []
+    start = time.time()
+    try:
+        playlist_id_all = GetPlaylistByUserId.GetPlaylistID_All(str(uid))
 
-    songInfo = GetSongsByPlaylist.GetSongsInfo_top100(str(playlist_id))
-    if songInfo:
-        for k, v in songInfo.items():
-            Mysql.Insert_SongsInfo(k, v)
-            songIDs.append(k)
+        for playlist_id in playlist_id_all:
+            # 歌单中歌曲信息
+            songInfo = GetSongsByPlaylist.GetSongsInfo_top100(str(playlist_id))
 
-        Mysql.insert_userLovesongs(uid, songIDs)
-    else:
-        print('用户喜欢歌单中歌曲不足100')
+            if songInfo:
+                post = {
+                    'uid': uid,
+                    'playlist_id': playlist_id,
+                    'songs': songInfo
+                }
+
+                collection.insert_one(post)
+                total += 1
+
+                print('playlist -',playlist_id,'insert successfully')
+
+        end = time.time()
+        print(total,' playlists have successfully added into db')
+        print('time costs : ', end-start)
+    except Exception:
+        print(Exception)
