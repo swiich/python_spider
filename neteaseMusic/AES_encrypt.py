@@ -69,3 +69,25 @@ def crypt_api_playlist(uid):
         "encSecKey": encSecKey
     }
     return data
+
+
+def crypt_api_userFollows(uid):
+    '''
+    解析用户关注列表参数
+    '''
+
+    first_param = "{uid:\"%s\",offset:\"0\",total:\"true\",limit:\"300\",csrf_token:\"\"}" % (uid)
+
+    forth_param = "0CoJUm6Qyw8W8jud"
+    params = get_params(first_param, forth_param)
+    encSecKey = get_encSecKey()
+    data = {
+        "params": params,
+        "encSecKey": encSecKey
+    }
+    return data
+
+
+def crypt_api_comments(songID):
+    pass
+

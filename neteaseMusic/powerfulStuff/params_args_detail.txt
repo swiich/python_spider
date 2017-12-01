@@ -46,3 +46,40 @@ csrf_token         #无影响因素
 136 552
 
 
+# 动态生成关注列表post分析
+
+丁磊
+page1
+
+uid 48353
+offset 0
+total true
+limit 20
+csrf_token ...
+
+page2
+
+uid
+offset 20
+total false
+limit 20
+
+page3
+
+uid
+offset 40
+total false
+limit
+
+page4
+
+uid
+offset 60
+total
+limit
+
+
+
+
+
+
