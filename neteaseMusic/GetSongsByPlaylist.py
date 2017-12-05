@@ -1,3 +1,4 @@
+# coding=utf-8
 '''
 通过网易云音乐playlistID,获取歌单中歌曲与歌曲ID(ID 450041032,411349068歌曲name为none)
 '''

@@ -1,3 +1,4 @@
+# coding=utf-8
 '''
 获取所查询ID用户的歌单详情
 '''
@@ -13,7 +14,7 @@ def GetTheNumberOfPl(uid):
     '''
     获取用户歌单数量
     :param uid: 用户ID
-    :return: [自创歌单数量，收藏歌单数量]
+    :return: (自创歌单数量，收藏歌单数量)
     '''
     url = 'http://music.163.com/user/home?id=' + uid
     selector = etree.HTML(PageRequest.GetHtml(url))
@@ -23,7 +24,7 @@ def GetTheNumberOfPl(uid):
     content = selector.xpath('//*[@id="sHeader"]/h3/span/text()')[0]
     # 用户收藏歌单
     amountCollect = int(re.compile(r'\d+').findall(content)[0])
-    # amount = amountCreate + amountCollect
+
     return amountCreate, amountCollect
 
 
@@ -88,8 +89,6 @@ def GetPlaylistID_All(uid):
     :param uid: 用户ID
     :return: playlist_all ( )
     '''
-    # 使用新列表保存，而不直接return GetPlaylistID_Separately(uid)[0] + GetPlaylistID_Separately(uid)[1]
-    # GetPlaylistID_Separately(uid)只用调用一次，而不是两次？
     a = GetPlaylistID_Separately(uid)
     return a[0] + a[1]
 

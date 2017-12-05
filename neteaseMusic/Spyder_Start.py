@@ -1,8 +1,12 @@
-import GetSongsByPlaylist
-import GetPlaylistByUserId
-from pymongo import MongoClient
+# coding=utf-8
+'''串行执行'''
+
 import time
 
+from pymongo import MongoClient
+
+import GetSongsByPlaylist
+import GetPlaylistByUserId
 
 if __name__ == '__main__':
 

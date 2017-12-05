@@ -1,11 +1,14 @@
 # coding=utf-8
+'''多线程执行'''
 
-import threading
 import queue
+import threading
+import time
+
+from pymongo import MongoClient
+
 import GetSongsByPlaylist
 import GetPlaylistByUserId
-from pymongo import MongoClient
-import time
 
 SHARE_Q = queue.Queue()
 _WORK_THREAD_NUM = 10

@@ -41,3 +41,12 @@
 # soup = BeautifulSoup(html, 'html.parser')
 # songCount = soup.select('span#playlist-track-count')[0].string
 # print(songCount)
+import queue
+q = queue.Queue(maxsize=3)
+
+
+offset = 0
+for i in range(offset, offset + 60, 20):
+    q.put(str(i))
+while not q.empty():
+    print(q.get())

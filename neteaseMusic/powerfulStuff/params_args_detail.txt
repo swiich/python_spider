@@ -79,6 +79,27 @@ total
 limit
 
 
+# 动态生成粉丝列表post分析
+
+丁磊
+page1
+
+userId 48353
+offset 0
+total true
+limit 20
+csrf_token ..
+
+
+page2
+
+userId
+offset 20
+total false
+limit
+csrf_token ..
+
+
 
 
 
