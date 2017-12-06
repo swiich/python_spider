@@ -3,12 +3,14 @@
 获取所查询ID用户的歌单详情
 '''
 
-import PageRequest
-import requests
 import json
-import AES_encrypt
-from lxml import etree
 import re
+
+import requests
+from lxml import etree
+from tool import PageRequest
+from tool import AES_encrypt
+
 
 def GetTheNumberOfPl(uid):
     '''
@@ -89,7 +91,7 @@ def GetPlaylistID_All(uid):
     :param uid: 用户ID
     :return: playlist_all ( )
     '''
-    a = GetPlaylistID_Separately(uid)
+    a = GetPlaylistID_Separately(str(uid))
     return a[0] + a[1]
 
 

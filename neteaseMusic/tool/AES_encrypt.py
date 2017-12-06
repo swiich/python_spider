@@ -75,7 +75,7 @@ def crypt_api_userFollows(uid, offset=0):
     解析用户关注列表参数
     '''
 
-    first_param = "{uid:\"%s\",offset:\"%s\",total:\"true\",limit:\"300\",csrf_token:\"\"}" % (uid, offset)
+    first_param = "{uid:\"%s\",offset:\"%s\",total:\"true\",limit:\"100\",csrf_token:\"\"}" % (uid, offset)
 
     forth_param = "0CoJUm6Qyw8W8jud"
     params = get_params(first_param, forth_param)
@@ -92,7 +92,7 @@ def crypt_api_userFans(uid, offset=0):
     解析用户粉丝列表参数
     '''
 
-    first_param = "{userId:\"%s\",offset:\"%s\",total:\"true\",limit:\"20\",csrf_token:\"\"}" % (uid, offset)
+    first_param = "{userId:\"%s\",offset:\"%s\",total:\"true\",limit:\"100\",csrf_token:\"\"}" % (uid, offset)
 
     forth_param = "0CoJUm6Qyw8W8jud"
     params = get_params(first_param, forth_param)

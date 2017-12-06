@@ -1,44 +1,20 @@
 # coding=utf-8
-'''串行执行'''
 
 import time
 
-from pymongo import MongoClient
+from pipeline import MyThread_Usrs
 
-import GetSongsByPlaylist
-import GetPlaylistByUserId
+# 代码整理规范
+# 写个配置文件，将所有也许会修改的数据整合到一起
+# 实现断点续传功能
 
 if __name__ == '__main__':
 
-    client = MongoClient('localhost', 27017)
-    db = client['test']
-    collection = db['cloudmusic']
-
-    total = 0
-    uid = 29372996
+    uid = 45218094
+    type = 'follows'
 
     start = time.time()
-    try:
-        playlist_id_all = GetPlaylistByUserId.GetPlaylistID_All(str(uid))
+    MyThread_Usrs.insertUsrs_1000(uid, type)
+    end = time.time()
 
-        for playlist_id in playlist_id_all:
-            # 歌单中歌曲信息
-            songInfo = GetSongsByPlaylist.GetSongsInfo_top100(str(playlist_id))
-
-            if songInfo:
-                post = {
-                    'uid': uid,
-                    'playlist_id': playlist_id,
-                    'songs': songInfo
-                }
-
-                collection.insert_one(post)
-                total += 1
-
-                print('playlist -',playlist_id,'insert successfully')
-
-        end = time.time()
-        print(total,' playlists have successfully added into db')
-        print('time costs : ', end-start)
-    except Exception:
-        print(Exception)
+    print('time costs: ', end - start)
