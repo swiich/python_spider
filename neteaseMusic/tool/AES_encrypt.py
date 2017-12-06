@@ -8,6 +8,11 @@ import base64
 from Crypto.Cipher import AES
 
 
+class Argserror(BaseException):
+    def __init__(self, arg):
+        self.args = arg
+
+
 def get_params(first_param, forth_param):
     '''
     获取params
@@ -45,20 +50,32 @@ def AES_encrypt(text, key, iv):
     return encrypt_text
 
 
-def crypt_api_playlist(uid):
+def crypt_api(ftype, uid, offset=0):
     '''
-    通过分析网易云网络请求抓包，playlist由ajax向指定网页服务器发包获取json格式文档动态生成，包含playlist所有数据, post内容为params & encSecKey
-    :param uid: 用户ID
-    :return: data={params,encSecKey}
+    decrypt params&encSeckey
     '''
+    try:
+        if  ftype == 'follows':
+            first_param = "{uid:\"%s\",offset:\"%s\",total:\"true\",limit:\"100\",csrf_token:\"\"}" % (uid, offset)
 
-    first_param = "{uid:\"%s\",type:\"-1\",limit:\"1000\",offset:\"0\",total:\"true\",csrf_token:\"\"}" % (uid)
-    # offset: 偏移量=n*limit-1   n为刷新数量
-    # total: 页面初始化时为true
-    # limit: 每次刷新歌单数量
-    # first_param = "{uid:\"%s\",wordwrap:\"7\", offset:\"%s\", total:\"false\", limit:\"36\", csrf_token:\"\"}" % (uid, offset)
+        elif ftype == 'fans':
+            first_param = "{userId:\"%s\",offset:\"%s\",total:\"true\",limit:\"100\",csrf_token:\"\"}" % (uid, offset)
+
+        elif ftype == 'comments':
+            first_param = "{rid:\"\", offset:\"%s\", total:\"true\", limit:\"20\", csrf_token:\"\"}" % offset
+
+        elif ftype == 'playlists':
+            first_param = "{uid:\"%s\",type:\"-1\",limit:\"1000\",offset:\"%s\",total:\"true\",csrf_token:\"\"}" % (uid, offset)
+
+        else:
+            raise Argserror('ftype参数错误，只能为fans或follows或comments或playlists')
+
+    except Argserror as a:
+        print(''.join(a.args))
+        data = {}
+        return data
+
     forth_param = "0CoJUm6Qyw8W8jud"
-
     params = get_params(first_param, forth_param)
     encSecKey = get_encSecKey()
 
@@ -68,42 +85,3 @@ def crypt_api_playlist(uid):
     }
 
     return data
-
-
-def crypt_api_userFollows(uid, offset=0):
-    '''
-    解析用户关注列表参数
-    '''
-
-    first_param = "{uid:\"%s\",offset:\"%s\",total:\"true\",limit:\"100\",csrf_token:\"\"}" % (uid, offset)
-
-    forth_param = "0CoJUm6Qyw8W8jud"
-    params = get_params(first_param, forth_param)
-    encSecKey = get_encSecKey()
-    data = {
-        "params": params,
-        "encSecKey": encSecKey
-    }
-    return data
-
-
-def crypt_api_userFans(uid, offset=0):
-    '''
-    解析用户粉丝列表参数
-    '''
-
-    first_param = "{userId:\"%s\",offset:\"%s\",total:\"true\",limit:\"100\",csrf_token:\"\"}" % (uid, offset)
-
-    forth_param = "0CoJUm6Qyw8W8jud"
-    params = get_params(first_param, forth_param)
-    encSecKey = get_encSecKey()
-    data = {
-        "params": params,
-        "encSecKey": encSecKey
-    }
-    return data
-
-
-def crypt_api_comments(songID):
-    pass
-

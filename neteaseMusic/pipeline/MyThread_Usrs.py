@@ -22,10 +22,10 @@ SHARE_Q = queue.Queue()
 _WORK_THREAD_NUM = 10
 
 
-class MyThread(threading.Thread):
+class UsrThread(threading.Thread):
     def __init__(self, uid, type):
         # 调用父类构造函数
-        super(MyThread, self).__init__()
+        super(UsrThread, self).__init__()
         self.uid = uid
         self.type = type
 
@@ -79,7 +79,7 @@ def insertUsrs_1000(uid, type):
 
     # 开启_WORK_THREAD_NUM个线程
     for i in range(_WORK_THREAD_NUM):
-        thread = MyThread(uid, type)
+        thread = UsrThread(uid, type)
 
         # 开始处理任务
         thread.start()
@@ -98,5 +98,3 @@ def showUsrs_100(uid, type):
     for k, v in tmp.items():
         print(k, '\t', v)
     print('---------------end---------------')
-
-
