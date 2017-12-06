@@ -23,13 +23,13 @@ def analyseUsrs(uid, type, offset=0):
             # 请求头与请求网址
             PageRequest.headers['Referer'] = 'http://music.163.com/user/follows?id=' + str(uid)
             url = 'http://music.163.com/weapi/user/getfollows/%s?csrf_token=' % uid
-            post_data = AES_encrypt.crypt_api(type, uid, offset)
+            post_data = AES_encrypt.crypt_api_userFollows(uid, offset)
             txt = 'follow'
 
         elif type == 'fans':
             PageRequest.headers['Referer'] = 'http://music.163.com/user/fans?id=' + str(uid)
             url = 'http://music.163.com/weapi/user/getfolloweds?csrf_token='
-            post_data = AES_encrypt.crypt_api(type, uid, offset)
+            post_data = AES_encrypt.crypt_api_userFans(uid, offset)
             txt = 'followeds'
 
         else:

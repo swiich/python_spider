@@ -37,14 +37,11 @@ def insertSongsOfPlaylist_single(uid, pid):
             }
 
             collection.insert_one(post)
-
-            return pid
+            return True
         else:
             return False
-
     except Exception as e:
         print(e)
-
     finally:
         client.close()
 

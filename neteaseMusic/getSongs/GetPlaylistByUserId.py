@@ -18,7 +18,7 @@ def GetTheNumberOfPl(uid):
     :param uid: 用户ID
     :return: (自创歌单数量，收藏歌单数量)
     '''
-    url = 'http://music.163.com/user/home?id=' + str(uid)
+    url = 'http://music.163.com/user/home?id=' + uid
     selector = etree.HTML(PageRequest.GetHtml(url))
     content = selector.xpath('//*[@id="cHeader"]/h3/span/text()')[0]
     # 用户自创歌单
@@ -40,7 +40,7 @@ def GetPlaylistDetail_Separately(uid):
     # playlist所请求网址
     url = 'http://music.163.com/weapi/user/playlist?csrf_token='
 
-    post_data = AES_encrypt.crypt_api('playlists', uid)
+    post_data = AES_encrypt.crypt_api_playlist(uid)
 
     content = requests.post(url, headers=PageRequest.headers, data=post_data).content.decode('utf-8')
     # 解析json
@@ -93,3 +93,7 @@ def GetPlaylistID_All(uid):
     '''
     a = GetPlaylistID_Separately(str(uid))
     return a[0] + a[1]
+
+
+
+
