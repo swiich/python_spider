@@ -1,5 +1,5 @@
 # coding=utf-8
-'''获取用户关注或粉丝列表写入数据库'''
+'''获取用户歌单写入数据库'''
 
 import queue
 import threading
