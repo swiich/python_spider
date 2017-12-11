@@ -36,7 +36,7 @@ def GetPlaylistDetail_Separately(uid):
     :param uid: 用户ID
     :return: (playlist_detail 自创, playlist_detail 收藏)
     '''
-    PageRequest.headers['Referer'] = 'http://music.163.com/user/home?id=' + uid
+    PageRequest.headers['Referer'] = 'http://music.163.com/user/home?id=' + str(uid)
     # playlist所请求网址
     url = 'http://music.163.com/weapi/user/playlist?csrf_token='
 
@@ -93,3 +93,29 @@ def GetPlaylistID_All(uid):
     '''
     a = GetPlaylistID_Separately(str(uid))
     return a[0] + a[1]
+
+
+def GetPlaylistDetail_Self(uid):
+    PageRequest.headers['Referer'] = 'http://music.163.com/user/home?id=' + str(uid)
+    # playlist所请求网址
+    url = 'http://music.163.com/weapi/user/playlist?csrf_token='
+
+    post_data = AES_encrypt.crypt_api('playlists', uid)
+
+    content = requests.post(url, headers=PageRequest.headers, data=post_data).content.decode('utf-8')
+    # 解析json
+    json_text = json.loads(content)
+    playlist = json_text['playlist']
+
+    n = GetTheNumberOfPl(uid)
+    playlist_self = playlist[0:n[0]-1]
+
+    return playlist_self
+
+
+def GetPlaylistID_Self(uid):
+
+    playlist = GetPlaylistDetail_Self(uid)
+    playlistID_self = [i['id'] for i in playlist]
+
+    return playlistID_self

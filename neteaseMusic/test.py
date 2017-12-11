@@ -41,12 +41,47 @@
 # soup = BeautifulSoup(html, 'html.parser')
 # songCount = soup.select('span#playlist-track-count')[0].string
 # print(songCount)
+# import queue
+# q = queue.Queue(maxsize=3)
+#
+#
+# offset = 0
+# for i in range(offset, offset + 60, 20):
+#     q.put(str(i))
+# while not q.empty():
+#     print(q.get())
+# import pymysql
+#
+# config = {
+#     'host': '127.0.0.1',
+#     'port': 3306,
+#     'user': 'root',
+#     'password': '1111',
+#     'db': 'cloudmusic',
+#     'charset': 'utf8mb4',
+#     'cursorclass': pymysql.cursors.DictCursor,
+# }
+# sql = "select uid from users where crawled=0 limit 10"
+# db = pymysql.connect(**config)
+# cursor = db.cursor()
+# cursor.execute(sql)
+# s= []
+# for i, v in enumerate(cursor.fetchall()):
+#     s.append(v[i]['uid'])
+#
+# db.close()
+# print(s)
 import queue
-q = queue.Queue(maxsize=3)
 
+def popq(q):
+    while not q.empty():
+        print(q.get())
 
-offset = 0
-for i in range(offset, offset + 60, 20):
-    q.put(str(i))
-while not q.empty():
-    print(q.get())
+q = queue.Queue()
+for i in range(10):
+    q.put(i)
+
+popq(q)
+
+print(q.qsize())
+

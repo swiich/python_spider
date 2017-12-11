@@ -50,25 +50,28 @@ def AES_encrypt(text, key, iv):
     return encrypt_text
 
 
-def crypt_api(ftype, uid, offset=0):
+def crypt_api(ftype, id, offset=0):
     '''
     decrypt params&encSeckey
     '''
     try:
         if  ftype == 'follows':
-            first_param = "{uid:\"%s\",offset:\"%s\",total:\"true\",limit:\"100\",csrf_token:\"\"}" % (uid, offset)
+            first_param = "{uid:\"%s\",offset:\"%s\",total:\"true\",limit:\"100\",csrf_token:\"\"}" % (id, offset)
 
         elif ftype == 'fans':
-            first_param = "{userId:\"%s\",offset:\"%s\",total:\"true\",limit:\"100\",csrf_token:\"\"}" % (uid, offset)
+            first_param = "{userId:\"%s\",offset:\"%s\",total:\"true\",limit:\"100\",csrf_token:\"\"}" % (id, offset)
 
         elif ftype == 'comments':
-            first_param = "{rid:\"\", offset:\"%s\", total:\"true\", limit:\"20\", csrf_token:\"\"}" % offset
+            first_param = "{rid:\"\", offset:\"%s\", total:\"true\", limit:\"100\", csrf_token:\"\"}" % offset
 
         elif ftype == 'playlists':
-            first_param = "{uid:\"%s\",type:\"-1\",limit:\"1000\",offset:\"%s\",total:\"true\",csrf_token:\"\"}" % (uid, offset)
+            first_param = "{uid:\"%s\",type:\"-1\",limit:\"1000\",offset:\"%s\",total:\"true\",csrf_token:\"\"}" % (id, offset)
+
+        elif ftype == 'ranks':
+            first_param = "{uid:\"%s\",type:\"-1\",limit:\"1000\",offset:\"0\",total:\"true\",csrf_token:\"\"}" % id
 
         else:
-            raise Argserror('ftype参数错误，只能为fans或follows或comments或playlists')
+            raise Argserror('ftype参数错误，只能为fans或follows或comments或playlists或ranks')
 
     except Argserror as a:
         print(''.join(a.args))

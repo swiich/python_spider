@@ -45,11 +45,13 @@ def GetSongsInfoForTop100(playlistId):
 
     # 歌单中歌曲数量
     songCount = int(soup.select('span#playlist-track-count')[0].string)
+
     if songCount >= 100:
         songInfo = soup.select('ul.f-hide li a')
         songName = [s.string for s in songInfo]
         songId = [re.compile('.*=(.*)').findall(s['href'])[0] for s in songInfo]
         songInfo = dict(map(lambda x, y: [x, y], songId, songName))
+
     else:
         songInfo = {}
 
@@ -65,6 +67,7 @@ def GetSongsInfo_top100(playlistId):
 
     songsInfo_100 = {}
     songsInfo_all = GetSongsInfoForTop100(playlistId)
+
     if songsInfo_all:
         for k, v in songsInfo_all.items():
             temp = {k: v}

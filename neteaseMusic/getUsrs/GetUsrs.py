@@ -47,6 +47,10 @@ def analyseUsrs(uid, type, offset=0):
     users = {}
     # users = json_text['follow']      # 被关注者的所有信息
     for i in json_text[txt]:
-        users[i['userId']] = i['nickname']
+        # 屏蔽僵尸用户
+        if i['followeds'] == 0 and i['follows'] <= 3:
+            pass
+        else:
+            users[i['userId']] = [i['nickname'], i['follows'], i['followeds']]
 
     return users

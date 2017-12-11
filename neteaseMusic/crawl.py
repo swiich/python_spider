@@ -1,26 +1,93 @@
 # coding=utf-8
 
 import time
+import queue
+import pymysql
 
-from pipeline import MyThread_Usrs, Multiproc_InsertSongs
-from getSongs import GetPlaylistByUserId
+from pipeline import MyThread_Usrs, Multiproc_InsertSongs, MyThread_Playlists
+
 
 # 代码整理规范
 # 写个配置文件，将所有也许会修改的数据整合到一起
 # 实现断点续传功能
 # 实现日志记录
 
+
+def GetUsrs():
+
+    config = MyThread_Usrs.config
+    db = pymysql.connect(**config)
+    cursor = db.cursor()
+    sql = "select uid from users where crawled=0 limit 10"
+    sql2 = 'update users set crawled=1 where crawled=0 limit 10'
+
+    # 起始uid
+    start_uid = [1]
+
+    total = 0
+    start = time.time()
+    try:
+        while True:
+            curr = 0
+            uid = start_uid.pop()
+            curr += MyThread_Usrs.insertUsrs_1000(uid, 'fans')
+            curr += MyThread_Usrs.insertUsrs_1000(uid, 'follows')
+
+            if not start_uid:
+                cursor.execute(sql)
+                for i in cursor.fetchall():
+                    start_uid.append(i['uid'])
+                cursor.execute(sql2)
+                db.commit()
+
+            time.sleep(1)
+            print("------------------------------currently crawled :" + str(curr) + "------------------------------")
+            print('------------------------------section    '+str(uid)+'    end------------------------------')
+            total += curr
+
+    except KeyboardInterrupt:
+        db.close()
+        end = time.time()
+        print('time costs: ', end - start)
+        print('totally crawled :' + str(total))
+
+    except Exception as e:
+        db.close()
+        print(e)
+
+
+def GetPlaylists():
+
+    config = MyThread_Usrs.config
+    db = pymysql.connect(**config)
+    cursor = db.cursor()
+
+    sql = "select uid from users where crawled_p=0 limit 10"
+    sql2 = 'update users set crawled_p=1 where crawled_p=0 limit 10'
+
+    task_queue = queue.Queue()
+
+    count = 0
+    try:
+        while True:
+            cursor.execute(sql)
+            for i in cursor.fetchall():
+                task_queue.put(i['uid'])
+            cursor.execute(sql2)
+            db.commit()
+
+            if not task_queue.empty():
+                count += MyThread_Playlists.insert_playlist_many(task_queue)
+
+    except Exception as e:
+        print(e)
+
+    finally:
+        db.close()
+        return count
+
+
 if __name__ == '__main__':
 
-    uid = 29631520
-    type = 'fans'
-
-    start = time.time()
-    # MyThread_Usrs.insertUsrs_1000(uid, type)
-    # Multiproc_InsertSongs.insertSongsOfPlaylistFromUid(uid)
-    a = GetPlaylistByUserId.GetPlaylistID_All(uid)
-    print(a)
-    end = time.time()
-
-    print('time costs: ', end - start)
+    GetPlaylists()
 
