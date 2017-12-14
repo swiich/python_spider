@@ -71,17 +71,67 @@
 #
 # db.close()
 # print(s)
-import queue
+# import queue
+#
+# def popq(q):
+#     while not q.empty():
+#         print(q.get())
+#
+# q = queue.Queue()
+# for i in range(10):
+#     q.put(i)
+#
+# popq(q)
+#
+# print(q.qsize())
 
-def popq(q):
-    while not q.empty():
-        print(q.get())
+from pymongo import MongoClient
+# import pymysql
+#
+# config = {
+#     'host': '127.0.0.1',
+#     'port': 3306,
+#     'user': 'root',
+#     'password': '1111',
+#     'db': 'cloudmusic',
+#     'charset': 'utf8mb4',
+#     'cursorclass': pymysql.cursors.DictCursor,
+# }
+# sql = 'insert into playlists (pid, crawled) VALUES (%s,%s)'
+# dbm = pymysql.connect(**config)
+# cursor = dbm.cursor()
 
-q = queue.Queue()
-for i in range(10):
-    q.put(i)
+client = MongoClient('localhost', 27017)
+db = client['test']
+collection = db['cloudmusic']
 
-popq(q)
+count = 0
+for a in collection.find():
+    for i in a['playlist']:
+        count += 1
 
-print(q.qsize())
+print(count)
+#
+# client = MongoClient('localhost', 27017)
+# db = client['test']
+# collection = db['playlistInfo']
+#
+# count = 0
+# for a in collection.find():
+#     count += len(a['songsInfo'])
+#
+# print(count)
+
+# try:
+#     for a in collection.find():
+#         for p in a['playlist']:
+#             cursor.execute(sql, (p, 0))
+#         dbm.commit()
+# except Exception:
+#     pass
+#
+# finally:
+#     client.close()
+#     dbm.close()
+
 

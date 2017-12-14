@@ -10,7 +10,7 @@ from getSongs import GetSongsByPlaylist
 
 client = MongoClient('localhost', 27017)
 db = client['test']
-collection = db['cloudmusic']
+collection = db['playlistInfo']
 
 
 def getTask_Q(uid):
@@ -31,8 +31,8 @@ def insertSongsOfPlaylist_single(uid, pid):
     try:
         if songInfo:
             post = {
+                '_id': pid,
                 'uid': uid,
-                'playlist_id': pid,
                 'songsInfo': songInfo
             }
 

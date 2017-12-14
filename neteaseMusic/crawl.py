@@ -87,7 +87,17 @@ def GetPlaylists():
         return count
 
 
+def GetSongs():
+    '''
+    317081492 119777169 480431733 62879556 104388569 647259377 129593031 74029445 136616 115260210 68014748
+    '''
+    uid_list = [317081492, 119777169, 480431733, 62879556, 104388569, 647259377,
+                129593031, 74029445, 136616, 115260210, 68014748]
+    for i in uid_list:
+        Multiproc_InsertSongs.insertSongsOfPlaylistFromUid(i)
+
+
 if __name__ == '__main__':
 
-    GetPlaylists()
+    GetSongs()
 
