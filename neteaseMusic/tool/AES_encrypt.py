@@ -70,8 +70,14 @@ def crypt_api(ftype, id, offset=0):
         elif ftype == 'ranks':
             first_param = "{uid:\"%s\",type:\"-1\",limit:\"1000\",offset:\"0\",total:\"true\",csrf_token:\"\"}" % id
 
+        elif ftype == 'lyrics':
+            first_param = "{id:\"%s\",lv:\"-1\",tv:\"-1\",csrf_token:\"\"}" % id
+
+        elif ftype == 'mp3':
+            first_param = "{ids:\"[%s]\",br:\"128000\",csrf_token:\"\"}" % id
+
         else:
-            raise Argserror('ftype参数错误，只能为fans或follows或comments或playlists或ranks')
+            raise Argserror('ftype参数错误，只能为fans或follows或comments或playlists或ranks或lyrics或mp3')
 
     except Argserror as a:
         print(''.join(a.args))

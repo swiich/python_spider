@@ -9,7 +9,7 @@ from getSongs import GetPlaylistByUserId
 
 client = MongoClient('localhost', 27017)
 db = client['test']
-collection = db['cloudmusic']
+collection = db['playlistDetailInfo']
 
 _WORK_THREAD_NUM = 10
 
@@ -34,7 +34,8 @@ class PlaylistThread(threading.Thread):
 
 def insert_playlist_one(uid):
     # 获取用户自创歌单列表
-    playlist = GetPlaylistByUserId.GetPlaylistID_Self(uid)
+    # playlist = GetPlaylistByUserId.GetPlaylistID_Self(uid)
+    playlist = GetPlaylistByUserId.GetPlaylistDetail_Self(uid)
 
     try:
         # 用户没有或只有一个歌单则不写入数据库库

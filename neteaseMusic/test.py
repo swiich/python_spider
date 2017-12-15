@@ -86,41 +86,43 @@
 # print(q.qsize())
 
 from pymongo import MongoClient
-# import pymysql
-#
-# config = {
-#     'host': '127.0.0.1',
-#     'port': 3306,
-#     'user': 'root',
-#     'password': '1111',
-#     'db': 'cloudmusic',
-#     'charset': 'utf8mb4',
-#     'cursorclass': pymysql.cursors.DictCursor,
-# }
-# sql = 'insert into playlists (pid, crawled) VALUES (%s,%s)'
-# dbm = pymysql.connect(**config)
-# cursor = dbm.cursor()
+import pymysql
 
-client = MongoClient('localhost', 27017)
-db = client['test']
-collection = db['cloudmusic']
+config = {
+    'host': '127.0.0.1',
+    'port': 3306,
+    'user': 'root',
+    'password': '1111',
+    'db': 'cloudmusic',
+    'charset': 'utf8mb4',
+    'cursorclass': pymysql.cursors.DictCursor,
+}
+sql = 'insert into songId (sid, sName) VALUES (%s, %s)'
+dbm = pymysql.connect(**config)
+cursor = dbm.cursor()
 
-count = 0
-for a in collection.find():
-    for i in a['playlist']:
-        count += 1
-
-print(count)
-#
 # client = MongoClient('localhost', 27017)
 # db = client['test']
-# collection = db['playlistInfo']
-#
+# collection = db['cloudmusic']
+
 # count = 0
 # for a in collection.find():
-#     count += len(a['songsInfo'])
+#     for i in a['playlist']:
+#         count += 1
 #
 # print(count)
+#
+client = MongoClient('localhost', 27017)
+db = client['test']
+collection = db['songInfo']
+
+
+for a in collection.find():
+    for i,j in a['songsInfo'].items():
+        cursor.execute(sql, (i, j))
+        dbm.commit()
+
+
 
 # try:
 #     for a in collection.find():

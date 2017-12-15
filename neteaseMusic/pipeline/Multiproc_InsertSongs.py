@@ -10,7 +10,7 @@ from getSongs import GetSongsByPlaylist
 
 client = MongoClient('localhost', 27017)
 db = client['test']
-collection = db['playlistInfo']
+collection = db['songInfo']
 
 
 def getTask_Q(uid):

@@ -3,11 +3,13 @@
 import time
 import queue
 import pymysql
+from pymongo import MongoClient
 
 from pipeline import MyThread_Usrs, Multiproc_InsertSongs, MyThread_Playlists
+from getSongsDetail import GetSongsDetail
 
 
-# 代码整理规范
+# 代码整理规范   PEP 8
 # 写个配置文件，将所有也许会修改的数据整合到一起
 # 实现断点续传功能
 # 实现日志记录
@@ -88,16 +90,27 @@ def GetPlaylists():
 
 
 def GetSongs():
-    '''
-    317081492 119777169 480431733 62879556 104388569 647259377 129593031 74029445 136616 115260210 68014748
-    '''
-    uid_list = [317081492, 119777169, 480431733, 62879556, 104388569, 647259377,
-                129593031, 74029445, 136616, 115260210, 68014748]
-    for i in uid_list:
-        Multiproc_InsertSongs.insertSongsOfPlaylistFromUid(i)
+    # uid_list = [317081492, 119777169, 480431733, 62879556, 104388569, 647259377,
+    #             129593031, 74029445, 136616, 115260210, 68014748]
+    uid_list = []
+    client = MongoClient('localhost', 27017)
+    db = client['test']
+    collection = db['playlistInfo']
+
+    cursor = collection.find()
+    for i in cursor:
+        uid_list.append(i['_id'])
+
+    while not uid_list:
+        Multiproc_InsertSongs.insertSongsOfPlaylistFromUid(uid_list.pop())
+
+
+def tmp():
+    Multiproc_InsertSongs.insertSongsOfPlaylistFromUid(58037)
+    Multiproc_InsertSongs.insertSongsOfPlaylistFromUid(58039)
 
 
 if __name__ == '__main__':
-
-    GetSongs()
+    a = GetSongsDetail.get_song_mp3(27598482)
+    print(a)
 
