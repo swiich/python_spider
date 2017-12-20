@@ -5,17 +5,24 @@ import queue
 import pymysql
 from pymongo import MongoClient
 
-from pipeline import MyThread_Usrs, Multiproc_InsertSongs, MyThread_Playlists
+from pipeline import MyThread_Usrs
+from pipeline import Multiproc_InsertSongs
+from pipeline import MyThread_Playlists
 from getSongsDetail import GetSongsDetail
+from getSongs import GetPlaylistByUserId
 
 
-# 代码整理规范   PEP 8
+# 利用类将方法整合
+# 代码整理规范        PEP 8  函数名不规范，应用小写加_，取名应短小   取名与思考尽量Pythonic
 # 写个配置文件，将所有也许会修改的数据整合到一起
-# 实现断点续传功能
 # 实现日志记录
+# README
 
 
-def GetUsrs():
+def get_users():
+    """
+    crawl users
+    """
 
     config = MyThread_Usrs.config
     db = pymysql.connect(**config)
@@ -23,7 +30,7 @@ def GetUsrs():
     sql = "select uid from users where crawled=0 limit 10"
     sql2 = 'update users set crawled=1 where crawled=0 limit 10'
 
-    # 起始uid
+    # initialize uid
     start_uid = [1]
 
     total = 0
@@ -58,7 +65,8 @@ def GetUsrs():
         print(e)
 
 
-def GetPlaylists():
+def get_playlists():
+    """crawl playlists"""
 
     config = MyThread_Usrs.config
     db = pymysql.connect(**config)
@@ -89,9 +97,9 @@ def GetPlaylists():
         return count
 
 
-def GetSongs():
-    # uid_list = [317081492, 119777169, 480431733, 62879556, 104388569, 647259377,
-    #             129593031, 74029445, 136616, 115260210, 68014748]
+def get_songs():
+    """crawl songs' ID and name"""
+
     uid_list = []
     client = MongoClient('localhost', 27017)
     db = client['test']
@@ -105,12 +113,57 @@ def GetSongs():
         Multiproc_InsertSongs.insertSongsOfPlaylistFromUid(uid_list.pop())
 
 
-def tmp():
-    Multiproc_InsertSongs.insertSongsOfPlaylistFromUid(58037)
-    Multiproc_InsertSongs.insertSongsOfPlaylistFromUid(58039)
+def songs_detail():
+    """crawl detail information of songs
+    ID,NAME,ALBUM
+    LYRICS
+    COMMENTS
+    MP3_URL
+    """
+
+    # database connector
+    client = MongoClient('localhost', 27017)
+    db = client['test']
+    collection = db['songsDetail']
+
+    config = MyThread_Usrs.config
+    dbm = pymysql.connect(**config)
+    cursor = dbm.cursor()
+
+    sql = "select sid from songid where crawled=0 limit 10"
+    sql2 = 'update songid set crawled=1 where crawled=0 limit 10'
+
+    task_queue = queue.Queue(maxsize=10)
+
+    while True:
+        data = cursor.execute(sql)
+        # if cursor is not NONE
+        if data:
+            # if task_queue is empty, set task_queue
+            if task_queue.empty():
+                for i in cursor.fetchall():
+                    task_queue.put(i['sid'])
+
+                cursor.execute(sql2)
+                dbm.commit()
+
+
+            else:
+                # task starts
+                sid = task_queue.get()
+
+                post_data = GetSongsDetail.all_info(sid)
+                try:
+                    collection.insert_one(post_data)
+                    print('-----------------end-----------------')
+                except Exception:
+                    print('dulplicate')
+
+        else:
+            dbm.close()
+            client.close()
+            break
 
 
 if __name__ == '__main__':
-    a = GetSongsDetail.get_song_mp3(27598482)
-    print(a)
-
+    print( GetPlaylistByUserId.GetPlaylistDetail_All(95031331))

@@ -1,7 +1,4 @@
 # coding=utf-8
-'''
-通过网易云音乐playlistID,获取歌单中歌曲与歌曲ID
-'''
 
 import re
 
@@ -13,8 +10,6 @@ from tool import PageRequest
 
 def GetSongsInfo(playlistId):
     '''
-    获取歌单歌曲信息, 歌曲数量
-    :param playlistId: 歌单ID
     :return: songInfo{id:name} , songcount int
     '''
 
@@ -26,7 +21,7 @@ def GetSongsInfo(playlistId):
     songName = [s.string for s in songInfo]
     songId = [re.compile('.*=(.*)').findall(s['href'])[0] for s in songInfo]
 
-    # 将歌曲ID与曲名合并为字典
+    # zip to dict
     songInfo = dict(map(lambda x, y: [x, y], songId, songName))
 
     return songInfo
@@ -34,8 +29,7 @@ def GetSongsInfo(playlistId):
 
 def GetSongsInfoForTop100(playlistId):
     '''
-    判断歌单中歌曲是否大于100，功能与GetSongsInfo稍重复，为避免函数GetSongsInfo_top100多次解析网页，小于100则返回空字典
-    :param playlistId: 歌单ID
+    return 100 items or NULL if less than 100
     :return: songInfo{id:name}
     '''
 
@@ -43,7 +37,7 @@ def GetSongsInfoForTop100(playlistId):
     html = PageRequest.GetHtml(url)
     soup = BeautifulSoup(html, 'html.parser')
 
-    # 歌单中歌曲数量
+    # the number of songs in playlist
     songCount = int(soup.select('span#playlist-track-count')[0].string)
 
     if songCount >= 100:
@@ -60,8 +54,7 @@ def GetSongsInfoForTop100(playlistId):
 
 def GetSongsInfo_top100(playlistId):
     '''
-    获取歌单前100首，不足100则返回空列表
-    :param playlistId: 歌单ID
+    get top 100 songs in playlist, if it's not enough of 100 items then return NULL
     :return: songsInfo_top100{id:name}
     '''
 
@@ -80,7 +73,7 @@ def GetSongsInfo_top100(playlistId):
 
 def GetPlaylistMusicCount(playlistID):
     '''
-    获取歌单中歌曲数量
+    get the number of songs in playlist
     :param playlistID:
     :return: int count
     '''

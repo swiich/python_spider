@@ -1,5 +1,5 @@
 # coding=utf-8
-'''获取用户关注列表'''
+"""get fans or followings"""
 
 import json
 import requests
@@ -15,12 +15,11 @@ class Argserror(BaseException):
 
 def analyseUsrs(uid, type, offset=0):
     '''
-    根据type解析用户关注或粉丝列表
+    analyse fans or following list depends on 'type' arg
     '''
 
     try:
         if type == 'follows':
-            # 请求头与请求网址
             PageRequest.headers['Referer'] = 'http://music.163.com/user/follows?id=' + str(uid)
             url = 'http://music.163.com/weapi/user/getfollows/%s?csrf_token=' % uid
             post_data = AES_encrypt.crypt_api(type, uid, offset)
@@ -33,7 +32,7 @@ def analyseUsrs(uid, type, offset=0):
             txt = 'followeds'
 
         else:
-            raise Argserror('type参数错误，只能为fans或follows')
+            raise Argserror('wrong type of "type"，only fans or follows')
 
     except Argserror as a:
         print(''.join(a.args))
@@ -41,13 +40,13 @@ def analyseUsrs(uid, type, offset=0):
         return users
 
     content = requests.post(url, headers=PageRequest.headers, data=post_data).content.decode('utf-8')
-    # 解析json
+    # analyse json
     json_text = json.loads(content)
 
     users = {}
-    # users = json_text['follow']      # 被关注者的所有信息
+    # users = json_text['follow']      # detail information of ..
     for i in json_text[txt]:
-        # 屏蔽僵尸用户
+        # ghost users shielded
         if i['followeds'] == 0 and i['follows'] <= 3:
             pass
         else:

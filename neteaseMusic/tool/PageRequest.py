@@ -1,7 +1,7 @@
 # coding=utf-8
-'''
-网页request
-'''
+"""
+page request
+"""
 
 from urllib import request
 from urllib.request import urlopen
@@ -16,11 +16,11 @@ headers = {
 
 
 def GetHtml(url):
-    '''
-    向指定网页发起请求获取html
-    :param url:request网页
+    """
+    request specified page to get html
+    :param url:requestPage
     :return:html
-    '''
+    """
 
     req = request.Request(url, headers=headers)
     content = urlopen(req).read()

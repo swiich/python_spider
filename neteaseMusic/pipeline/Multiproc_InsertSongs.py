@@ -1,5 +1,5 @@
 # coding=utf-8
-'''多进程执行用户歌曲写入'''
+"""multiprocessing"""
 
 import multiprocessing
 import queue
@@ -14,7 +14,7 @@ collection = db['songInfo']
 
 
 def getTask_Q(uid):
-    # 获取任务队列
+    # set task queue
     playlistQue = queue.Queue()
     playlist_id = GetPlaylistByUserId.GetPlaylistID_All(uid)
 
@@ -25,7 +25,7 @@ def getTask_Q(uid):
 
 
 def insertSongsOfPlaylist_single(uid, pid):
-    # 将pid中歌曲写入数据库,如果歌单中无歌曲则不进行操作并返回false
+    # put songs in pid into database, off operation and return false if none in playlist
     songInfo = GetSongsByPlaylist.GetSongsInfo(pid)
 
     try:
@@ -50,7 +50,7 @@ def insertSongsOfPlaylist_single(uid, pid):
 
 
 def insertSongsOfPlaylistFromUid(uid):
-    # 创建进程池
+    # set up process pool
     pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
 
     results = []

@@ -1,5 +1,5 @@
 # coding=utf-8
-'''获取用户关注或粉丝列表写入数据库'''
+"""get the followings or fans of users, write into database"""
 
 import queue
 import threading
@@ -24,20 +24,20 @@ _WORK_THREAD_NUM = 10
 
 class UsrThread(threading.Thread):
     def __init__(self, uid, type):
-        # 调用父类构造函数
+        # invoke superclass init method
         super(UsrThread, self).__init__()
         self.uid = uid
         self.type = type
         self.result = None
 
     def run(self):
-        '''
-        重写基类run方法
-        '''
+        """
+        override base class 'run' method
+        """
         global SHARE_Q
 
         if not SHARE_Q.empty():
-            # 获取任务
+            # get tasks
             offset = SHARE_Q.get()
             self.result = insertUsrs_100(self.uid, self.type, offset)
             SHARE_Q.task_done()
@@ -48,7 +48,7 @@ class UsrThread(threading.Thread):
 
 
 def insertUsrs_100(uid, type, offset=0):
-    '''根据type选择写入粉丝或关注列表,获取step 100'''
+    """ write fans or followings depends on 'type' arg """
 
     db = pymysql.connect(**config)
     cursor = db.cursor()
@@ -64,7 +64,7 @@ def insertUsrs_100(uid, type, offset=0):
                 result += 1
 
     except pymysql.Error:
-        # 出错则回滚
+        # if errors, rollback
         db.rollback()
 
     finally:
@@ -73,7 +73,8 @@ def insertUsrs_100(uid, type, offset=0):
 
 
 def setOffsetQ():
-    '''向offset队列中放入任务'''
+    """put tasks into 'offset' queue"""
+
     global SHARE_Q
     if SHARE_Q.empty():
         for i in range(0, 1000, 100):
@@ -86,11 +87,11 @@ def insertUsrs_1000(uid, type):
     total = 0
     setOffsetQ()
 
-    # 开启_WORK_THREAD_NUM个线程
+    # activate the number of '_WORK_THREAD_NUM' threads
     for i in range(_WORK_THREAD_NUM):
         thread = UsrThread(uid, type)
 
-        # 开始处理任务
+        # task starts
         thread.start()
         threads.append(thread)
 
@@ -102,7 +103,7 @@ def insertUsrs_1000(uid, type):
 
 
 def showUsrs_100(uid, type):
-    '''显示关注或粉丝列表前100'''
+    """show top 100 of fans or followings"""
 
     tmp = GetUsrs.analyseUsrs(uid, type)
 

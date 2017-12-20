@@ -6,8 +6,8 @@ import json
 import requests
 
 
-def getRank(uid):
-    # 获取用户听歌排行
+def get_rank(uid):
+    # crawl the rank of users' music listening
 
     PageRequest.headers['Referer'] = 'http://music.163.com/user/home?id=' + str(uid)
     url = 'http://music.163.com/weapi/v1/play/record?csrf_token='
@@ -23,7 +23,7 @@ def getRank(uid):
         rank = json_text['allData']
 
     except Exception:
-        print('无权限访问，用户已关闭所有人可见')
+        print('Unauthorized access，display option has been closed by user')
 
     finally:
         return rank

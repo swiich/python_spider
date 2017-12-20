@@ -8,7 +8,6 @@ import json
 
 def songsInfo(sid):
     """
-    :param sid: 歌曲ID
     :return: songDict {sName: [sSinger, sAlbum]}
     """
     url = r'http://music.163.com/song?id='
@@ -16,9 +15,9 @@ def songsInfo(sid):
     html = PageRequest.GetHtml(url+str(sid))
     bsObj = BeautifulSoup(html, 'html.parser')
 
-    # 若出现歌曲信息不完整则返回空字典
+    # return NULL if not intact song information
     try:
-    # tmp为歌手与专辑列表
+        # tmp - singer and album list
         tmp = bsObj.select('div .cnt p')
         sName = bsObj.select('div .hd .tit em')[0].contents[0]
         sSinger = tmp[0].select('a')[0].contents[0]
@@ -37,7 +36,10 @@ def songsInfo(sid):
 
 
 def getComments(sid):
-    """获取热门评论当前数量，普通评论大于100则获取100条，小于100则获取当前数量"""
+    """
+    get current number of hot comments，get 100 items if common comments are more than 100，
+    current number of items if comments are less than 100
+    """
 
     url = 'http://music.163.com/weapi/v1/resource/comments/R_SO_4_%s?csrf_token=' % sid
     PageRequest.headers['Referer'] = 'http://music.163.com/song?id=' + str(sid)
@@ -47,14 +49,22 @@ def getComments(sid):
 
     json_text = json.loads(content)
 
+    hts = []
+    cs = []
+
     hotComments = (hotC for hotC in json_text['hotComments'])
     comments = (comm for comm in json_text['comments'])
 
-    return hotComments, comments
+    for i in hotComments:
+        hts.append(i)
+    for i in comments:
+        cs.append(i)
+
+    return hts, cs
 
 
 def getLyric(sid):
-    """获取歌词"""
+    """crawl lyrics"""
 
     url = 'http://music.163.com/weapi/song/lyric?csrf_token='
     PageRequest.headers['Referer'] = 'http://music.163.com/song?id=' + str(sid)
@@ -64,14 +74,21 @@ def getLyric(sid):
 
     json_text = json.loads(content)
 
-    lrc = json_text['lrc']
-    tlyric = json_text['tlyric']
+    # if lyrics NULL
+    try:
+        lrc = json_text['lrc']
+        tlyric = json_text['tlyric']
+
+    except KeyError:
+        lrc = None
+        tlyric = None
+
 
     return lrc, tlyric
 
 
 def get_song_mp3(sid):
-    # 获取MP3 url
+    # crawl MP3 url
 
     url = 'http://music.163.com/weapi/song/enhance/player/url?csrf_token='
     PageRequest.headers['Referer'] = 'http://music.163.com/song?id=' + str(sid)
@@ -84,3 +101,22 @@ def get_song_mp3(sid):
     mp3_url = json_text['data'][0]['url']
 
     return mp3_url
+
+
+def all_info(sid):
+    # id,name,album,lyric,comments,mp3_url
+
+    name_singr_albm = songsInfo(sid)
+    lrc, tlyric = getLyric(sid)
+    hotcs, comments = getComments(sid)
+    mp3_url = get_song_mp3(sid)
+
+    post_data = {
+        '_id': sid,
+        'n_s_a': name_singr_albm,
+        'lrcs': [lrc, tlyric],
+        'cmts': [hotcs, comments],
+        'mp3_url': mp3_url
+    }
+
+    return post_data

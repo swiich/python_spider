@@ -1,5 +1,5 @@
 # coding=utf-8
-'''获取用户歌单写入数据库'''
+"""get playlists and write into database"""
 
 import queue
 import threading
@@ -16,15 +16,15 @@ _WORK_THREAD_NUM = 10
 
 class PlaylistThread(threading.Thread):
     def __init__(self, uid):
-        # 调用父类构造函数
+        # invoke superclass init method
         super(PlaylistThread, self).__init__()
         self.uid = uid
         self.result = None
 
     def run(self):
-        '''
-        重写基类run方法
-        '''
+        """
+        override base class 'run' method
+        """
         self.result = insert_playlist_one(self.uid)
         print('task----------', self.getName(), '----------done')
 
@@ -33,12 +33,12 @@ class PlaylistThread(threading.Thread):
 
 
 def insert_playlist_one(uid):
-    # 获取用户自创歌单列表
+    # get details of self-created playlist
     # playlist = GetPlaylistByUserId.GetPlaylistID_Self(uid)
     playlist = GetPlaylistByUserId.GetPlaylistDetail_Self(uid)
 
     try:
-        # 用户没有或只有一个歌单则不写入数据库库
+        # pass if none or just one playlist
         if len(playlist) > 1:
             post = {
                 '_id': uid,
@@ -59,24 +59,24 @@ def insert_playlist_one(uid):
 
 
 def insert_playlist_many(task_queue):
-    '''
-    将队列中任务uid写入数据库
-    :param task_queue:uid队列
-    :return count:插入成功数量
-    '''
+    """
+    put uids from task_queue into database
+    :param task_queue:uid queue
+    :return count:the number of successfully inserted
+    """
     threads = []
     count = 0
 
     try:
-        # 将task_queue中对象加入任务队列
+        # add objects in task_queue into thread
         for i in range(_WORK_THREAD_NUM):
             if not task_queue.empty():
                 thread = PlaylistThread(task_queue.get())
 
             else:
-                # StopIteration 迭代器没有更多的值
+                # StopIteration - no more values in iterator
                 raise StopIteration
-            # 开始处理任务
+            # tasks start
             thread.start()
             threads.append(thread)
 
@@ -86,10 +86,10 @@ def insert_playlist_many(task_queue):
                 count += 1
 
     except KeyboardInterrupt:
-        print('用户中断操作')
+        print('user interrupted')
 
     except StopIteration:
-        print('任务队列为空')
+        print('empty task_queue')
 
     finally:
         client.close()
