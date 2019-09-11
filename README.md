@@ -1,6 +1,6 @@
 netEase_Music spider
 ====================
-crawl netease_music web to get users and their playlists with multiprocessing,thread,async and etc. 
+crawl netease_music web to get users and their playlists via multiprocessing,thread,async and etc. 
 --------------------
 Function for example:
 * `Get information of user`
